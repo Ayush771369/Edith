@@ -1,0 +1,36 @@
+services:
+
+  backend:
+    build: ./backend
+    container_name: repo_backend
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ./backend:/app
+
+    depends_on:
+      - db
+
+    env_file:
+      - .env
+
+  db:
+    image: pgvector/pgvector:pg16
+
+    container_name: repo_db
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: edith_db
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

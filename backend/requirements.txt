@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+requests
+
+sqlalchemy
+psycopg2-binary
+pgvector
+
+gitpython
+
+tree-sitter
+tree-sitter-python
+
+openai
+
+python-dotenv
