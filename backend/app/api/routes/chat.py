@@ -15,7 +15,22 @@ def chat(
     payload: ChatRequest,
     db: Session = Depends(get_db)
 ):
-    query_embedding = generate_embedding(payload.query)
+    retrieval_query = payload.query
+    if payload.history:
+        recent_history = "\n".join(
+            [
+                f"{msg.role.capitalize()}: {msg.content}"
+                for msg in payload.history[-5:]
+            ]
+        )
+        retrieval_query = f"""
+        Previous conversation:
+        {recent_history}
+
+        Current question:
+        {payload.query}
+        """
+    query_embedding = generate_embedding(retrieval_query)
 
     distance = CodeChunk.embedding.cosine_distance(query_embedding)
 
@@ -30,13 +45,15 @@ def chat(
     context = "\n\n".join(
         [
             f"""
-        File: {chunk.file.path}
-        Chunk: {chunk.chunk_name}
+            ========================================
+            FILE: {chunk.file.path}
+            SYMBOL: {chunk.chunk_name}
+            TYPE: {chunk.chunk_type}
+            ========================================
 
-        Code: 
-        {chunk.content[:1500]}
-
-        """.strip()
+            {chunk.content[:1200]}
+            """
+        .strip()
             for chunk, distance in results
         ]
     )
@@ -50,22 +67,41 @@ def chat(
         )
 
     prompt = f"""
-    You are an expert software engineer.
+        You are Edith, an AI codebase assistant.
 
-    Answer using ONLY the provided code context.
+        You are answering questions about a specific indexed repository.
 
-    If the answer cannot be found in the code,
-    say so.
+        RULES:
 
-    Conversation History:
-    {history_text}
+        1. Use ONLY information found in the provided code context.
+        2. Do NOT use outside knowledge.
+        3. If the answer is not present in the code context, respond exactly:
 
-    Current Question:
-    {payload.query}
+        "I cannot find this information in the indexed repository."
 
-    Code Context:
-    {context}
-    """
+        4. When possible, mention:
+        - file paths
+        - class names
+        - function names
+
+        5. If explaining a workflow or execution path:
+        - explain step by step
+        - reference the relevant symbols
+
+        6. Do not invent files, functions, classes, or behavior.
+
+        Conversation History:
+        {history_text}
+
+        Current Question:
+        {payload.query}
+
+        Retrieved Code Context:
+
+        {context}
+
+        Answer:
+        """
 
     answer = ask_llm(prompt)
 
@@ -79,7 +115,7 @@ def chat(
             "chunk": chunk.chunk_name,
             "chunk_type": chunk.chunk_type,
             "distance": round(float(distance), 4),
-            "content": chunk.content[:500]
+            "content": chunk.content[:1000]
         }
         for chunk, distance in results
     ]

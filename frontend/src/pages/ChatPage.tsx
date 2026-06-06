@@ -31,6 +31,7 @@ const STARTER_PROMPTS = [
 // Sources accordion component
 const SourcesPanel: React.FC<{ sources: ChatSource[] }> = ({ sources }) => {
   const [open, setOpen] = useState(false)
+  const [selectedSource, setSelectedSource] = useState<ChatSource | null>(null)
 
   return (
     <div className="mt-3 border-t border-edith-border/60 pt-3">
@@ -55,7 +56,16 @@ const SourcesPanel: React.FC<{ sources: ChatSource[] }> = ({ sources }) => {
             return (
               <div
                 key={i}
-                className="flex items-start gap-3 p-3 rounded-lg bg-edith-bg/60 border border-edith-border/40"
+                onClick={() => setSelectedSource(source)}
+                className="
+                flex items-start gap-3 p-3 rounded-lg
+                bg-edith-bg/60
+                border border-edith-border/40
+                cursor-pointer
+                hover:border-edith-accent/50
+                hover:bg-edith-card
+                transition-all
+              "
               >
                 <div className="w-6 h-6 rounded-md bg-edith-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xs font-bold font-mono text-edith-accent">{i + 1}</span>
@@ -85,6 +95,38 @@ const SourcesPanel: React.FC<{ sources: ChatSource[] }> = ({ sources }) => {
           })}
         </div>
       )}
+      {selectedSource && (
+  <div
+    className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6"
+    onClick={() => setSelectedSource(null)}
+  >
+    <div
+      className="bg-edith-card border border-edith-border rounded-xl max-w-4xl w-full max-h-[80vh] overflow-auto p-6"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h3 className="font-bold text-lg mb-2">
+        {selectedSource.chunk}
+      </h3>
+
+      <p className="text-xs text-edith-text-dim mb-4">
+        {selectedSource.file}
+      </p>
+
+      <pre className="text-xs overflow-auto bg-edith-bg p-4 rounded-lg">
+        <code>
+          {selectedSource.content}
+        </code>
+      </pre>
+
+      <button
+        onClick={() => setSelectedSource(null)}
+        className="mt-4 px-4 py-2 rounded-lg bg-edith-accent"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
     </div>
   )
 }
