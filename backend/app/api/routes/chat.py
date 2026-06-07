@@ -7,6 +7,7 @@ from app.models.code_chunk import CodeChunk # type: ignore
 from app.schemas.chat import ChatRequest # type: ignore
 from app.services.embeddings.embedding_service import generate_embedding # type: ignore
 from app.services.llm.llm_service import ask_llm # type: ignore
+from app.services.search.hybrid_search import hybrid_search # type: ignore
 
 router = APIRouter()
 
@@ -30,19 +31,14 @@ def chat(
         Current question:
         {payload.query}
         """
-    query_embedding = generate_embedding(retrieval_query)
+        results = hybrid_search(
+        repository_id=payload.repository_id,
+        query=payload.query,
+        db=db,
+        limit=10
+        )
 
-    distance = CodeChunk.embedding.cosine_distance(query_embedding)
-
-    results = (
-        db.query(CodeChunk, distance.label("distance"))
-        .filter(CodeChunk.repository_id == payload.repository_id)
-        .order_by(distance)
-        .limit(10)
-        .all()
-    )
-
-    context = "\n\n".join(
+        context = "\n\n".join(
         [
             f"""
             ========================================
@@ -62,8 +58,8 @@ def chat(
 
     for msg in payload.history:
         history_text += (
-            f"{msg.role.capitalize()}:"
-            f"{msg.content}\n"
+            f"{msg.role.upper()}:\n"
+            f"{msg.content}\n\n"
         )
 
     prompt = f"""
@@ -74,7 +70,13 @@ def chat(
         RULES:
 
         1. Use ONLY information found in the provided code context.
-        2. Do NOT use outside knowledge.
+        2. Do not infer, assume, or speculate.
+
+            Only state facts that are directly supported by the retrieved code context.
+
+            If a claim cannot be verified from the retrieved context, explicitly say:
+
+            "I cannot verify this from the retrieved code."
         3. If the answer is not present in the code context, respond exactly:
 
         "I cannot find this information in the indexed repository."
