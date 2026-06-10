@@ -8,6 +8,11 @@ from app.services.parser.python_parser import (
     extract_classes,
     extract_functions
 ) # type: ignore
+from app.services.parser.javascript_parser import (
+    parse_javascript_file,
+    extract_classes,
+    extract_functions
+) # type: ignore
 
 
 def chunk_repository(
@@ -23,14 +28,18 @@ def chunk_repository(
     chunk_count = 0
 
     for file in files:
-        if file.language != "Python":
+        if file.language not in ["Python", "JavaScript"]:
             continue
 
         try:
-            tree, source = parse_python_file(file.path)
-
-            classes = extract_classes(tree, source)
-            functions = extract_functions(tree, source)
+            if file.language == "Python":
+                tree, code = parse_python_file(file.path)
+                classes = extract_classes(tree, code)
+                functions = extract_functions(tree, code)
+            elif file.language == "JavaScript":
+                tree, code = parse_javascript_file(file.path)
+                classes = extract_classes(tree, code)
+                functions = extract_functions(tree, code)
 
             for cls in classes:
                 db.add(
