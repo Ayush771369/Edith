@@ -1,0 +1,322 @@
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+.edith-explorer {
+  --edith-bg:            #0f1117;
+  --edith-surface:       #161b27;
+  --edith-border:        #1e2535;
+  --edith-text-primary:  #e2e8f0;
+  --edith-text-secondary:#7c8da6;
+  --edith-text-muted:    #4a5568;
+  --edith-accent:        #5b8af5;
+  --edith-accent-dim:    rgba(91, 138, 245, 0.12);
+  --edith-selected-bg:   rgba(91, 138, 245, 0.15);
+  --edith-selected-border: #5b8af5;
+  --edith-hover-bg:      rgba(255, 255, 255, 0.04);
+  --edith-folder-color:  #f0b429;
+  --edith-file-color:    #7c8da6;
+  --edith-class-color:   #e2b96f;
+  --edith-fn-color:      #7dd3b0;
+  --edith-error-color:   #f87171;
+  --edith-badge-radius:  3px;
+  --edith-row-height:    30px;
+  --edith-font:          "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+  --edith-font-sans:     -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  font-family: var(--edith-font);
+  background-color: var(--edith-bg);
+  color: var(--edith-text-primary);
+  border: 1px solid var(--edith-border);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 220px;
+  max-width: 380px;
+  user-select: none;
+}
+
+/* ─── Header ────────────────────────────────────────────────────────────────── */
+.edith-explorer__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--edith-border);
+  background-color: var(--edith-surface);
+}
+
+.edith-explorer__repo-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--edith-accent);
+  flex-shrink: 0;
+}
+
+.edith-explorer__repo-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--edith-text-primary);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Tree Container ────────────────────────────────────────────────────────── */
+.edith-tree {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.edith-tree-item {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.edith-tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Tree Row ──────────────────────────────────────────────────────────────── */
+.edith-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: var(--edith-row-height);
+  padding-right: 12px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+  outline: none;
+}
+
+.edith-tree-row:hover {
+  background-color: var(--edith-hover-bg);
+}
+
+.edith-tree-row:focus-visible {
+  background-color: var(--edith-hover-bg);
+  border-left-color: var(--edith-accent);
+}
+
+.edith-tree-row--selected {
+  background-color: var(--edith-selected-bg);
+  border-left-color: var(--edith-selected-border);
+}
+
+.edith-tree-row--selected:hover {
+  background-color: var(--edith-selected-bg);
+}
+
+.edith-tree-row--empty {
+  cursor: default;
+}
+
+/* ─── Chevron ───────────────────────────────────────────────────────────────── */
+.edith-tree-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: var(--edith-text-muted);
+  transition: transform 0.15s ease, color 0.1s ease;
+}
+
+.edith-tree-chevron svg {
+  width: 8px;
+  height: 8px;
+}
+
+.edith-tree-chevron--open {
+  transform: rotate(90deg);
+  color: var(--edith-text-secondary);
+}
+
+.edith-tree-chevron--spacer {
+  pointer-events: none;
+}
+
+/* ─── Icons ─────────────────────────────────────────────────────────────────── */
+.edith-tree-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.edith-tree-icon--folder {
+  color: var(--edith-folder-color);
+}
+
+.edith-tree-icon--file {
+  color: var(--edith-file-color);
+}
+
+.edith-tree-icon--class {
+  color: var(--edith-class-color);
+}
+
+.edith-tree-icon--function {
+  color: var(--edith-fn-color);
+}
+
+/* ─── Labels ────────────────────────────────────────────────────────────────── */
+.edith-tree-label {
+  font-size: 12.5px;
+  color: var(--edith-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.edith-tree-row--folder .edith-tree-label {
+  color: var(--edith-text-primary);
+  font-weight: 500;
+}
+
+.edith-tree-row--entity .edith-tree-label {
+  color: var(--edith-text-secondary);
+  font-size: 12px;
+}
+
+.edith-tree-row--selected .edith-tree-label {
+  color: #fff;
+}
+
+/* ─── Badges ────────────────────────────────────────────────────────────────── */
+.edith-tree-badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 1px 5px;
+  border-radius: var(--edith-badge-radius);
+  flex-shrink: 0;
+  text-transform: lowercase;
+}
+
+.edith-tree-badge--class {
+  background-color: rgba(224, 185, 111, 0.15);
+  color: var(--edith-class-color);
+  border: 1px solid rgba(224, 185, 111, 0.25);
+}
+
+.edith-tree-badge--function {
+  background-color: rgba(125, 211, 176, 0.12);
+  color: var(--edith-fn-color);
+  border: 1px solid rgba(125, 211, 176, 0.22);
+}
+
+.edith-tree-badge--lang {
+  background-color: rgba(91, 138, 245, 0.1);
+  color: var(--edith-accent);
+  border: 1px solid rgba(91, 138, 245, 0.2);
+  font-family: var(--edith-font-sans);
+}
+
+/* ─── Loading State ─────────────────────────────────────────────────────────── */
+.edith-explorer--loading,
+.edith-explorer--error,
+.edith-explorer--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 24px;
+  min-height: 160px;
+}
+
+.edith-loader {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 24px;
+}
+
+.edith-loader__bar {
+  display: block;
+  width: 4px;
+  background-color: var(--edith-accent);
+  border-radius: 2px;
+  animation: edith-pulse 1.2s ease-in-out infinite;
+}
+
+.edith-loader__bar:nth-child(1) { animation-delay: 0s;    height: 12px; }
+.edith-loader__bar:nth-child(2) { animation-delay: 0.2s;  height: 20px; }
+.edith-loader__bar:nth-child(3) { animation-delay: 0.4s;  height: 12px; }
+
+@keyframes edith-pulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+  50%       { opacity: 1;   transform: scaleY(1);   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edith-loader__bar {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* ─── State Icons ───────────────────────────────────────────────────────────── */
+.edith-state-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.edith-state-icon--error {
+  color: var(--edith-error-color);
+}
+
+.edith-state-icon--empty {
+  color: var(--edith-text-muted);
+}
+
+.edith-state-label {
+  font-family: var(--edith-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--edith-text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+.edith-state-detail {
+  font-family: var(--edith-font-sans);
+  font-size: 12px;
+  color: var(--edith-text-secondary);
+  margin: 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ─── Retry Button ──────────────────────────────────────────────────────────── */
+.edith-retry-btn {
+  font-family: var(--edith-font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 5px;
+  border: 1px solid var(--edith-border);
+  background-color: var(--edith-surface);
+  color: var(--edith-text-primary);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  margin-top: 4px;
+}
+
+.edith-retry-btn:hover {
+  background-color: var(--edith-hover-bg);
+  border-color: var(--edith-accent);
+  color: var(--edith-accent);
+}
+
+.edith-retry-btn:focus-visible {
+  outline: 2px solid var(--edith-accent);
+  outline-offset: 2px;
+}
