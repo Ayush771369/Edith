@@ -15,7 +15,10 @@ from app.services.scanner.file_scaner import scan_repository #type: ignore
 from app.services.parsers.parse_repository import parse_repository #type: ignore
 from app.services.chunking.chunk_repository import chunk_repository #type: ignore
 from app.services.embedding.embed_repository import embed_repository #type: ignore
-
+from app.services.repository_map_service import (
+    get_repository_map as get_repository_map_service
+)
+from app.schemas.repository_map import RepositoryMapResponse
 
 router = APIRouter()
 
@@ -93,4 +96,15 @@ async def analyze_repository(
     "status": "ready"
 }
 
-    
+@router.get(
+    "/map/{repository_id}",
+    response_model=RepositoryMapResponse
+)
+async def repository_map(
+    repository_id: int,
+    db: Session = Depends(get_db)
+):
+    return get_repository_map_service(
+        repository_id,
+        db
+    )
