@@ -4,6 +4,7 @@ from fastapi import HTTPException # type: ignore
 from app.models.files import File
 from app.models.parsed_entity import ParsedEntity
 from app.models.repository import Repository
+from app.models.code_chunk import CodeChunk
 from app.schemas.repository_map import EntityInfo, FileInfo, RepositoryMapResponse
 
 
@@ -34,17 +35,41 @@ def get_repository_map(repository_id: int, db: Session) -> RepositoryMapResponse
         for entity in parsed_entities:
             entities_by_file_id.setdefault(entity.file_id, []).append(entity)
 
+    # 3b. Get all code_chunks for the same files (or repository) in one query
+    chunks_by_file_id: Dict[int, List[CodeChunk]] = {}
+    if file_ids:
+        code_chunks = (
+            db.query(CodeChunk)
+            .filter(CodeChunk.file_id.in_(file_ids))
+            .all()
+        )
+        # Group by file_id for quick lookup
+        for chunk in code_chunks:
+            chunks_by_file_id.setdefault(chunk.file_id, []).append(chunk)
+
     # 4. Build the response
     file_infos: List[FileInfo] = []
     for file in files:
         # Get entities for this file, default to empty list
         file_entities = entities_by_file_id.get(file.id, [])
+        # Get chunks for this file, default to empty list
+        file_chunks = chunks_by_file_id.get(file.id, [])
+
+        # Build a lookup map: (chunk_type, chunk_name, start_line, end_line) -> chunk.id
+        chunk_lookup = {
+            (chunk.chunk_type, chunk.chunk_name, chunk.start_line, chunk.end_line): chunk.id
+            for chunk in file_chunks
+        }
+
         entity_infos = [
             EntityInfo(
                 type=entity.entity_type,
                 name=entity.entity_name,
                 start_line=entity.start_line,
-                end_line=entity.end_line
+                end_line=entity.end_line,
+                id=chunk_lookup.get(
+                    (entity.entity_type, entity.entity_name, entity.start_line, entity.end_line)
+                )  # Assuming a match always exists; if not, id will be None (but schema expects int)
             )
             for entity in file_entities
         ]

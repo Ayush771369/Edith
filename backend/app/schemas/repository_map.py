@@ -7,6 +7,7 @@ class EntityInfo(BaseModel):
     name: str
     start_line: int
     end_line: int
+    id: int
 
 
 class FileInfo(BaseModel):

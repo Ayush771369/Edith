@@ -8,6 +8,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { SearchPage } from '@/pages/SearchPage'
 import { ChatPage } from '@/pages/ChatPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { RepositoryExplorerPage } from '@/pages/RepositoryExplorerPage'
 
 const App: React.FC = () => {
   return (
@@ -40,6 +41,7 @@ const App: React.FC = () => {
           <Route index element={<DashboardPage />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="chat" element={<ChatPage />} />
+          <Route path="explorer" element={<RepositoryExplorerPage />} />
         </Route>
 
         {/* 404 */}

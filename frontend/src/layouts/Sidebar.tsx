@@ -30,6 +30,12 @@ const NAV_ITEMS = [
     icon: MessageSquare,
     to: '/dashboard/chat',
   },
+
+  {
+    label: 'Repository Explorer',
+    icon: FolderGit2,
+    to: '/dashboard/explorer',
+  },
 ]
 
 export const Sidebar: React.FC = () => {
