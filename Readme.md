@@ -1,86 +1,131 @@
-# Edith
+# EDITH
 
-> AI-powered Repository Intelligence Platform for understanding, exploring, searching, and chatting with codebases.
+> **AI-Powered Repository Intelligence Platform**
+>
+> Understand, explore, search, and chat with codebases using semantic retrieval and Retrieval-Augmented Generation (RAG).
 
-Edith helps developers analyze GitHub repositories by converting source code into a structured knowledge base that supports repository exploration, semantic search, and natural language interactions.
+EDITH transforms GitHub repositories into structured, searchable knowledge bases, enabling developers to navigate unfamiliar codebases, discover functionality, perform semantic search, and ask natural language questions about repository architecture and implementation details.
 
 ---
 
-## Features
+## Why EDITH?
+
+Understanding an unfamiliar codebase is one of the most time-consuming tasks in software development.
+
+Developers often spend hours navigating files, tracing function calls, searching documentation, and manually piecing together system architecture before becoming productive.
+
+EDITH accelerates repository onboarding by combining:
+
+* Repository parsing
+* Semantic code search
+* Vector embeddings
+* Retrieval-Augmented Generation (RAG)
+* Natural language repository interactions
+
+into a unified developer experience.
+
+Whether you're joining a new team, exploring an open-source project, or auditing a large repository, EDITH helps you understand code faster.
+
+---
+
+## Key Features
 
 ### Repository Analysis
 
 * Clone and analyze public GitHub repositories
 * Automatic repository indexing pipeline
-* File scanning and language detection
+* Source file discovery and language detection
+* Metadata extraction for repository understanding
 
-### Code Parsing
+### Intelligent Code Parsing
 
-* Python support via Tree-sitter
-* JavaScript support via Tree-sitter
-* Extracts:
+* Python parsing via Tree-sitter
+* JavaScript parsing via Tree-sitter
+* Extraction of:
 
   * Classes
   * Functions
-  * Metadata (file paths, line numbers)
-
-### Chunking & Embeddings
-
-* Converts parsed entities into semantic code chunks
-* Generates vector embeddings using Ollama + Nomic Embed
-* Stores embeddings in ChromaDB for retrieval
-
-### Repository Explorer
-
-* Interactive repository tree view
-* Browse:
-
-  * Folders
-  * Files
-  * Classes
-  * Functions
-* Dynamic repository mapping powered by backend APIs
+  * Methods
+  * File metadata
+  * Source locations
 
 ### Semantic Search
 
-* Search code using natural language
-* Retrieve relevant functions and classes by meaning rather than keywords
-* Vector similarity search using embeddings
+Search code using natural language instead of exact keywords.
+
+Example queries:
+
+```text
+authentication middleware
+```
+
+```text
+repository ingestion pipeline
+```
+
+```text
+vector database initialization
+```
+
+EDITH retrieves relevant code entities using vector similarity search and semantic understanding.
+
+### Repository Explorer
+
+Explore repository structure through an interactive interface:
+
+* Folder hierarchy
+* Files
+* Classes
+* Functions
+* Extracted entities
+
+Designed to provide a high-level understanding of repository organization.
 
 ### Repository Chat
 
-* Ask questions about a repository in plain English
-* Context-aware responses generated from indexed code
-* Retrieval-Augmented Generation (RAG) pipeline
+Ask questions about repositories in plain English:
+
+```text
+How does authentication work?
+```
+
+```text
+Which function generates embeddings?
+```
+
+```text
+Explain the architecture of this project.
+```
+
+EDITH retrieves relevant context from indexed code and generates repository-aware responses through a Retrieval-Augmented Generation pipeline.
 
 ---
 
 ## Architecture
 
-```text
-GitHub Repository
-        │
-        ▼
-   Repository Scan
-        │
-        ▼
-   Language Detection
-        │
-        ▼
-      Parsing
-        │
-        ▼
-     Chunking
-        │
-        ▼
-    Embeddings
-        │
-        ▼
-     ChromaDB
-        │
- ┌──────┴──────┐
- ▼             ▼
-Search       Chat
+```mermaid
+flowchart TD
+
+A[GitHub Repository]
+--> B[Repository Scan]
+
+B --> C[Language Detection]
+
+C --> D[Tree-sitter Parsing]
+
+D --> E[Code Chunk Generation]
+
+E --> F[Embedding Generation]
+
+F --> G[ChromaDB Vector Store]
+
+G --> H[Semantic Search]
+
+G --> I[Context Retrieval]
+
+I --> J[LLM]
+
+J --> K[Repository Chat]
 ```
 
 ---
@@ -101,13 +146,14 @@ Search       Chat
 * SQLAlchemy
 * PostgreSQL
 
-### AI / Search
+### AI & Retrieval
 
 * ChromaDB
 * Ollama
 * Nomic Embed Text
+* Retrieval-Augmented Generation (RAG)
 
-### Parsing
+### Code Parsing
 
 * Tree-sitter Python
 * Tree-sitter JavaScript
@@ -119,57 +165,40 @@ Search       Chat
 
 ---
 
-## Current Workflow
+## Workflow
 
-1. Analyze a GitHub repository
-2. Scan source files
-3. Parse classes and functions
-4. Create code chunks
-5. Generate embeddings
-6. Store vectors in ChromaDB
-7. Explore repository structure
-8. Search code semantically
-9. Chat with the repository
+1. User submits a GitHub repository.
+2. EDITH clones and scans the repository.
+3. Source files are parsed using Tree-sitter.
+4. Classes, functions, and metadata are extracted.
+5. Code entities are converted into semantic chunks.
+6. Embeddings are generated using Nomic Embed Text.
+7. Vectors are stored in ChromaDB.
+8. Users can:
+
+   * Explore repository structure
+   * Perform semantic search
+   * Chat with the repository
 
 ---
 
 ## Example Use Cases
 
-### Repository Exploration
+### Repository Onboarding
 
-Browse the structure of a codebase and inspect extracted classes and functions.
+Understand a new repository without manually traversing hundreds of files.
 
-### Semantic Search
+### Open Source Exploration
 
-Search queries such as:
+Quickly discover how unfamiliar projects are structured.
 
-```text
-function that retrieves verses
-```
+### Developer Productivity
 
-```text
-API endpoint for chat requests
-```
+Locate implementation details using natural language instead of keyword-based searches.
 
-```text
-vector database initialization
-```
+### Architecture Discovery
 
-### Repository Chat
-
-Ask questions like:
-
-```text
-How does the authentication flow work?
-```
-
-```text
-Which function retrieves data from the vector database?
-```
-
-```text
-Explain the architecture of this repository.
-```
+Understand relationships between modules, services, and key components.
 
 ---
 
@@ -178,9 +207,11 @@ Explain the architecture of this repository.
 ### Completed
 
 * Repository ingestion
-* Parsing pipeline
-* Chunk generation
+* Repository indexing
+* Tree-sitter parsing
+* Semantic chunk generation
 * Embedding generation
+* Vector storage
 * Semantic search
 * Repository chat
 * Repository explorer
@@ -194,17 +225,66 @@ Explain the architecture of this repository.
 ### Planned
 
 * TypeScript parser
+* Multi-language support
+* Cross-file dependency analysis
 * Call graph generation
 * Go-to-definition support
-* Cross-file dependency analysis
 * Multi-repository search
 * Advanced repository insights
+
+---
+
+## Screenshots
+
+### Repository Explorer
+
+[Add Screenshot]
+
+### Semantic Search
+
+[Add Screenshot]
+
+### Repository Chat
+
+[Add Screenshot]
+
+---
+
+## Running Locally
+
+```bash
+git clone <repository-url>
+cd edith
+
+docker compose up --build
+```
+
+Frontend:
+
+```bash
+http://localhost:5173
+```
+
+Backend:
+
+```bash
+http://localhost:8000
+```
+
+---
+
+## Future Vision
+
+EDITH is evolving from a repository search tool into a comprehensive repository intelligence platform focused on helping developers understand, navigate, and reason about large codebases.
+
+The long-term goal is to make codebases as searchable and explorable as documents.
 
 ---
 
 ## Author
 
 **Ayush Varun**
-Chemical Engineering Undergraduate, IIT Indore
 
-Building developer tools, AI systems, and repository intelligence platforms.
+B.Tech Chemical Engineering, IIT Indore
+
+Interested in AI Systems, Developer Tooling, Repository Intelligence, Retrieval-Augmented Generation, and Machine Learning.
